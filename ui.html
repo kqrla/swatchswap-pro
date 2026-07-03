@@ -1,0 +1,490 @@
+<!doctype html>
+<html>
+<head>
+  <script>
+    try { window.localStorage.getItem('x') } catch (e) {
+      const store = new Map()
+      const shim = { getItem: k => store.has(k) ? store.get(k) : null, setItem: (k,v) => { store.set(k,String(v)) }, removeItem: k => { store.delete(k) }, clear: () => { store.clear() }, key: i => Array.from(store.keys())[i] ?? null, get length() { return store.size } }
+      Object.defineProperty(window, 'localStorage', { value: shim, configurable: true })
+    }
+  </script>
+  <style>
+    html, body { margin: 0; padding: 0; height: auto; min-height: 0; }
+    #plugin-root { height: auto; }
+    body { display: block; }
+    dialog.fig-fill-picker-dialog { width: 320px; max-width: 320px; min-width: 320px; max-height: none; height: max-content; }
+
+    #tab-bar {
+      display: flex;
+      border-bottom: 1px solid var(--figma-color-border);
+      background: var(--figma-color-bg);
+    }
+    .tab {
+      flex: 1;
+      padding: 7px 0;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--figma-color-text-secondary);
+      font-family: var(--font-family);
+      font-size: var(--body-medium-fontSize);
+      cursor: pointer;
+    }
+    .tab.active {
+      color: var(--figma-color-text);
+      border-bottom-color: var(--figma-color-text);
+    }
+    .tab:hover:not(.active) { color: var(--figma-color-text); }
+
+    .state-msg { padding: var(--spacer-2) var(--spacer-3); color: var(--figma-color-text-secondary); font-family: var(--font-family); font-size: var(--body-medium-fontSize); text-align: center; }
+    .loading-msg { padding: var(--spacer-2) var(--spacer-3); color: var(--figma-color-text-secondary); font-family: var(--font-family); font-size: var(--body-medium-fontSize); text-align: center; font-style: italic; }
+    .color-row { display: flex; align-items: center; gap: var(--spacer-2); padding: 3px var(--spacer-3); }
+    .orig-swatch { width: 24px; height: 24px; border-radius: 4px; border: 1px solid var(--figma-color-border); flex-shrink: 0; }
+    .arrow { color: var(--figma-color-text-secondary); font-size: 12px; flex-shrink: 0; font-family: var(--font-family); }
+    .color-row fig-input-color { flex: 1; }
+
+    #node-badge {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      padding: 4px var(--spacer-3);
+      background: var(--figma-color-bg-secondary);
+      border-bottom: 1px solid var(--figma-color-border);
+      font-family: var(--font-family);
+      font-size: 11px;
+      color: var(--figma-color-text-secondary);
+    }
+    #node-badge .badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--figma-color-icon-brand);
+      flex-shrink: 0;
+    }
+
+    #panel-palettes { display: flex; flex-direction: column; }
+    .palette-save-row {
+      display: flex; align-items: center; gap: var(--spacer-2);
+      padding: var(--spacer-2) var(--spacer-3);
+      border-bottom: 1px solid var(--figma-color-border);
+    }
+    .palette-save-row input {
+      flex: 1;
+      background: var(--figma-color-bg-secondary);
+      border: 1px solid var(--figma-color-border);
+      border-radius: 4px;
+      color: var(--figma-color-text);
+      font-family: var(--font-family);
+      font-size: var(--body-medium-fontSize);
+      padding: 4px 8px;
+      outline: none;
+    }
+    .palette-save-row input:focus { border-color: var(--figma-color-border-selected); }
+    .palette-save-row input::placeholder { color: var(--figma-color-text-disabled); }
+    .btn-sm {
+      background: var(--figma-color-bg-brand);
+      color: var(--figma-color-text-onbrand);
+      border: none; border-radius: 4px;
+      font-family: var(--font-family); font-size: 11px; font-weight: 500;
+      padding: 5px 10px; cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    }
+    .btn-sm:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-sm.ghost {
+      background: var(--figma-color-bg-secondary);
+      color: var(--figma-color-text-secondary);
+      border: 1px solid var(--figma-color-border);
+    }
+    .btn-sm.ghost:hover { color: var(--figma-color-text); border-color: var(--figma-color-border-strong); }
+    .palette-empty {
+      padding: var(--spacer-3) var(--spacer-3);
+      color: var(--figma-color-text-secondary);
+      font-family: var(--font-family);
+      font-size: var(--body-medium-fontSize);
+      text-align: center;
+      line-height: 1.5;
+    }
+    .palette-item {
+      display: flex; align-items: center; gap: var(--spacer-2);
+      padding: 6px var(--spacer-3);
+      border-bottom: 1px solid var(--figma-color-border);
+    }
+    .palette-item:last-child { border-bottom: none; }
+    .palette-dots { display: flex; gap: 2px; flex-shrink: 0; }
+    .palette-dot {
+      width: 14px; height: 14px; border-radius: 3px;
+      border: 1px solid rgba(0,0,0,0.08); flex-shrink: 0;
+    }
+    .palette-name {
+      flex: 1;
+      font-family: var(--font-family);
+      font-size: var(--body-medium-fontSize);
+      color: var(--figma-color-text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .palette-actions { display: flex; gap: 4px; flex-shrink: 0; }
+    .btn-load {
+      background: none;
+      border: 1px solid var(--figma-color-border);
+      border-radius: 4px;
+      color: var(--figma-color-text-secondary);
+      font-family: var(--font-family); font-size: 11px;
+      padding: 3px 8px; cursor: pointer;
+    }
+    .btn-load:hover { color: var(--figma-color-text); border-color: var(--figma-color-border-strong); }
+    .btn-del {
+      background: none; border: none;
+      color: var(--figma-color-text-secondary);
+      font-size: 14px; line-height: 1;
+      cursor: pointer; padding: 2px 4px; border-radius: 3px;
+    }
+    .btn-del:hover { color: var(--figma-color-text-danger); background: var(--figma-color-bg-danger-secondary); }
+    .palette-io {
+      display: flex; gap: var(--spacer-2);
+      padding: var(--spacer-2) var(--spacer-3);
+      border-top: 1px solid var(--figma-color-border);
+    }
+  </style>
+</head>
+<body>
+<div id="plugin-root">
+  <div id="tab-bar">
+    <button id="tab-colors" class="tab active">Colors</button>
+    <button id="tab-palettes" class="tab">Palettes</button>
+  </div>
+
+  <div id="panel-colors">
+    <div id="node-badge"><div class="badge-dot"></div><span id="badge-text"></span></div>
+    <fig-content id="main-content">
+      <div class="state-msg">Select a layer to scan its colors.</div>
+    </fig-content>
+    <fig-footer id="footer" style="display:none">
+      <fig-button id="apply-btn" type="submit" disabled>Apply colors</fig-button>
+    </fig-footer>
+  </div>
+
+  <div id="panel-palettes" style="display:none">
+    <div class="palette-save-row">
+      <input type="text" id="palette-name" placeholder="Name this palette…" maxlength="40">
+      <button class="btn-sm" id="save-palette-btn">Save current</button>
+    </div>
+    <div id="palette-list"><div class="palette-empty">No palettes saved yet.<br>Set your colors then save them here.</div></div>
+    <div class="palette-io">
+      <button class="btn-sm ghost" id="export-btn">Export JSON</button>
+      <button class="btn-sm ghost" id="import-btn">Import JSON</button>
+      <input type="file" id="import-file" accept=".json" style="display:none">
+    </div>
+  </div>
+</div>
+
+<script>
+function quantizeColors(pixelDataList, maxColors) {
+  const buckets = new Map()
+  for (const data of pixelDataList) {
+    for (let i = 0; i < data.length; i += 4) {
+      if (data[i + 3] < 30) continue
+      const r = data[i] >> 3, g = data[i+1] >> 3, b = data[i+2] >> 3
+      const key = (r << 10) | (g << 5) | b
+      buckets.set(key, (buckets.get(key) || 0) + 1)
+    }
+  }
+  const sorted = Array.from(buckets.entries()).sort((a, b) => b[1] - a[1])
+  const kept = []
+  outer: for (const [key] of sorted) {
+    const r = ((key >> 10) & 0x1f) << 3
+    const g = ((key >> 5) & 0x1f) << 3
+    const b = (key & 0x1f) << 3
+    for (const prev of kept) {
+      const dr = r-prev.r, dg = g-prev.g, db = b-prev.b
+      if (Math.sqrt(dr*dr+dg*dg+db*db) < 30) continue outer
+    }
+    kept.push({ r, g, b })
+    if (kept.length >= maxColors) break
+  }
+  return kept
+}
+function toHex(r, g, b) {
+  return '#' + [r,g,b].map(v => Math.max(0,Math.min(255,v)).toString(16).padStart(2,'0').toUpperCase()).join('')
+}
+function hexToRgb(hex) {
+  const h = hex.replace('#','')
+  return { r: parseInt(h.slice(0,2),16), g: parseInt(h.slice(2,4),16), b: parseInt(h.slice(4,6),16) }
+}
+function colorDist(r1,g1,b1,r2,g2,b2) { return Math.sqrt((r1-r2)**2+(g1-g2)**2+(b1-b2)**2) }
+
+let solidEntries = [], imageEntries = [], loadedImages = [], savedPalettes = []
+let lastH = 0, raf = 0
+
+function measureH() {
+  const root = document.getElementById('plugin-root')
+  if (!root) return 0
+  let h = Math.ceil(root.getBoundingClientRect().height)
+  const d = document.querySelector('dialog.fig-fill-picker-dialog[open]')
+  if (d) h = Math.max(h, Math.ceil(d.getBoundingClientRect().bottom))
+  return h
+}
+function reportH() { const h = measureH(); if (h && h !== lastH) { lastH = h; parent.postMessage({ pluginMessage: { type: 'resize', height: h } }, '*') } }
+const root$ = document.getElementById('plugin-root')
+if (root$ && typeof ResizeObserver !== 'undefined') new ResizeObserver(() => { if (raf) cancelAnimationFrame(raf); raf = requestAnimationFrame(reportH) }).observe(root$)
+new MutationObserver(() => { if (raf) cancelAnimationFrame(raf); raf = requestAnimationFrame(reportH) }).observe(document.body, { childList: true, attributes: true, attributeFilter: ['open'], subtree: true })
+
+const tabColors = document.getElementById('tab-colors')
+const tabPalettes = document.getElementById('tab-palettes')
+const panelColors = document.getElementById('panel-colors')
+const panelPalettes = document.getElementById('panel-palettes')
+
+tabColors.addEventListener('click', () => {
+  tabColors.classList.add('active'); tabPalettes.classList.remove('active')
+  panelColors.style.display = ''; panelPalettes.style.display = 'none'
+})
+tabPalettes.addEventListener('click', () => {
+  tabPalettes.classList.add('active'); tabColors.classList.remove('active')
+  panelColors.style.display = 'none'; panelPalettes.style.display = ''
+  renderPaletteList()
+})
+
+function showMessage(msg) {
+  document.getElementById('main-content').innerHTML = '<div class="state-msg">' + msg + '</div>'
+  document.getElementById('footer').style.display = 'none'
+  document.getElementById('node-badge').style.display = 'none'
+}
+function showLoading(msg) {
+  document.getElementById('main-content').innerHTML = '<div class="loading-msg">' + msg + '</div>'
+  document.getElementById('footer').style.display = 'none'
+}
+
+function buildColorRow(originalHex, index, entries) {
+  const row = document.createElement('div')
+  row.className = 'color-row'
+  const swatch = document.createElement('div')
+  swatch.className = 'orig-swatch'
+  swatch.style.background = originalHex
+  swatch.title = originalHex.toLowerCase()
+  const arrow = document.createElement('span')
+  arrow.className = 'arrow'
+  arrow.textContent = '→'
+  const picker = document.createElement('fig-input-color')
+  picker.setAttribute('picker', 'figma-native')
+  picker.setAttribute('alpha', 'false')
+  picker.setAttribute('value', entries[index].current)
+  picker.setAttribute('full', '')
+  const update = e => {
+    const val = (e.detail && e.detail.value) ? e.detail.value : picker.value
+    entries[index].current = val.startsWith('#') ? val.toUpperCase() : ('#' + val.toUpperCase())
+    checkChanged()
+  }
+  picker.addEventListener('change', update)
+  picker.addEventListener('input', update)
+  row.appendChild(swatch); row.appendChild(arrow); row.appendChild(picker)
+  return row
+}
+
+function renderAll() {
+  const content = document.getElementById('main-content')
+  content.innerHTML = ''
+  if (solidEntries.length > 0) {
+    const g = document.createElement('fig-group')
+    g.setAttribute('name', 'Vector colors (' + solidEntries.length + ')')
+    solidEntries.forEach((e, i) => g.appendChild(buildColorRow(e.original, i, solidEntries)))
+    content.appendChild(g)
+  }
+  if (imageEntries.length > 0) {
+    const g = document.createElement('fig-group')
+    g.setAttribute('name', 'Image colors (' + imageEntries.length + ')')
+    imageEntries.forEach((e, i) => g.appendChild(buildColorRow(e.original, i, imageEntries)))
+    content.appendChild(g)
+  }
+  document.getElementById('footer').style.display = ''
+  checkChanged()
+}
+
+function checkChanged() {
+  const changed = solidEntries.some(e => e.original.toLowerCase() !== e.current.toLowerCase()) ||
+                  imageEntries.some(e => e.original.toLowerCase() !== e.current.toLowerCase())
+  document.getElementById('apply-btn').toggleAttribute('disabled', !changed)
+}
+
+async function processImageColors(images) {
+  if (images.length === 0) { imageEntries = []; return }
+  const pixelDataList = []
+  for (const { bytes } of images) {
+    const blob = new Blob([new Uint8Array(bytes)], { type: 'image/png' })
+    let bitmap
+    try { bitmap = await createImageBitmap(blob) } catch(e) { continue }
+    const scale = Math.min(1, 150 / Math.max(bitmap.width, bitmap.height))
+    const w = Math.max(1, Math.floor(bitmap.width * scale))
+    const h = Math.max(1, Math.floor(bitmap.height * scale))
+    const canvas = new OffscreenCanvas(w, h)
+    const ctx = canvas.getContext('2d')
+    ctx.drawImage(bitmap, 0, 0, w, h)
+    pixelDataList.push(ctx.getImageData(0, 0, w, h).data)
+  }
+  const colors = quantizeColors(pixelDataList, 8)
+  imageEntries = colors.map(c => { const hex = toHex(c.r, c.g, c.b); return { original: hex, current: hex } })
+}
+
+async function buildModifiedImages(replacements) {
+  const result = []
+  const THRESHOLD = 35
+  for (const { hash, bytes } of loadedImages) {
+    const blob = new Blob([new Uint8Array(bytes)], { type: 'image/png' })
+    let bitmap
+    try { bitmap = await createImageBitmap(blob) } catch(e) { continue }
+    const canvas = new OffscreenCanvas(bitmap.width, bitmap.height)
+    const ctx = canvas.getContext('2d')
+    ctx.drawImage(bitmap, 0, 0)
+    const imgData = ctx.getImageData(0, 0, bitmap.width, bitmap.height)
+    const d = imgData.data
+    let modified = false
+    for (let i = 0; i < d.length; i += 4) {
+      if (d[i+3] < 10) continue
+      const pr = d[i], pg = d[i+1], pb = d[i+2]
+      for (const rep of replacements) {
+        const dist = colorDist(pr, pg, pb, rep.from.r, rep.from.g, rep.from.b)
+        if (dist < THRESHOLD) {
+          const t = Math.max(0, 1 - dist / THRESHOLD)
+          d[i]   = Math.round(pr*(1-t) + rep.to.r*t)
+          d[i+1] = Math.round(pg*(1-t) + rep.to.g*t)
+          d[i+2] = Math.round(pb*(1-t) + rep.to.b*t)
+          modified = true; break
+        }
+      }
+    }
+    if (modified) {
+      ctx.putImageData(imgData, 0, 0)
+      const resultBlob = await canvas.convertToBlob({ type: 'image/png' })
+      result.push({ oldHash: hash, bytes: Array.from(new Uint8Array(await resultBlob.arrayBuffer())) })
+    }
+  }
+  return result
+}
+
+document.getElementById('apply-btn').addEventListener('click', async function() {
+  this.setAttribute('disabled', '')
+  this.textContent = 'Working…'
+  const solidReplacements = solidEntries
+    .filter(e => e.original.toLowerCase() !== e.current.toLowerCase())
+    .map(e => ({ from: e.original, to: e.current }))
+  const imageReplacements = imageEntries
+    .filter(e => e.original.toLowerCase() !== e.current.toLowerCase())
+    .map(e => ({ from: hexToRgb(e.original), to: hexToRgb(e.current) }))
+  let modifiedImages = []
+  if (imageReplacements.length > 0 && loadedImages.length > 0) {
+    modifiedImages = await buildModifiedImages(imageReplacements)
+  }
+  parent.postMessage({ pluginMessage: { type: 'apply', solidReplacements, modifiedImages } }, '*')
+  this.textContent = 'Apply colors'
+})
+
+// ---- palette tab ----
+function renderPaletteList() {
+  const list = document.getElementById('palette-list')
+  list.innerHTML = ''
+  if (savedPalettes.length === 0) {
+    list.innerHTML = '<div class="palette-empty">No palettes saved yet.<br>Set your target colors in the Colors tab, then save them here.</div>'
+    return
+  }
+  for (const palette of savedPalettes) {
+    const item = document.createElement('div')
+    item.className = 'palette-item'
+    const dots = document.createElement('div')
+    dots.className = 'palette-dots'
+    for (const hex of palette.colors.slice(0, 7)) {
+      const dot = document.createElement('div')
+      dot.className = 'palette-dot'
+      dot.style.background = hex
+      dot.title = hex
+      dots.appendChild(dot)
+    }
+    const name = document.createElement('span')
+    name.className = 'palette-name'
+    name.textContent = palette.name
+    const actions = document.createElement('div')
+    actions.className = 'palette-actions'
+    const loadBtn = document.createElement('button')
+    loadBtn.className = 'btn-load'
+    loadBtn.textContent = 'Load'
+    loadBtn.addEventListener('click', () => {
+      const allEntries = [...solidEntries, ...imageEntries]
+      for (let i = 0; i < Math.min(palette.colors.length, allEntries.length); i++) {
+        allEntries[i].current = palette.colors[i].toUpperCase()
+      }
+      tabColors.click()
+      renderAll()
+    })
+    const delBtn = document.createElement('button')
+    delBtn.className = 'btn-del'
+    delBtn.textContent = '×'
+    delBtn.title = 'Delete'
+    delBtn.addEventListener('click', () => parent.postMessage({ pluginMessage: { type: 'delete-palette', id: palette.id } }, '*'))
+    actions.appendChild(loadBtn); actions.appendChild(delBtn)
+    item.appendChild(dots); item.appendChild(name); item.appendChild(actions)
+    list.appendChild(item)
+  }
+}
+
+document.getElementById('save-palette-btn').addEventListener('click', () => {
+  const nameEl = document.getElementById('palette-name')
+  const name = nameEl.value.trim()
+  if (!name) { nameEl.focus(); return }
+  const allEntries = [...solidEntries, ...imageEntries]
+  if (allEntries.length === 0) { tabColors.click(); return }
+  const palette = { id: 'pal-' + Date.now(), name, colors: allEntries.map(e => e.current) }
+  parent.postMessage({ pluginMessage: { type: 'save-palette', palette } }, '*')
+  nameEl.value = ''
+})
+
+document.getElementById('export-btn').addEventListener('click', () => {
+  if (!savedPalettes.length) return
+  const blob = new Blob([JSON.stringify(savedPalettes, null, 2)], { type: 'application/json' })
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = 'swatchswap-palettes.json'
+  a.click()
+})
+document.getElementById('import-btn').addEventListener('click', () => document.getElementById('import-file').click())
+document.getElementById('import-file').addEventListener('change', async function(e) {
+  const file = e.target.files[0]
+  if (!file) return
+  try {
+    const imported = JSON.parse(await file.text())
+    if (!Array.isArray(imported)) return
+    for (const p of imported) {
+      if (p.id && p.name && Array.isArray(p.colors))
+        parent.postMessage({ pluginMessage: { type: 'save-palette', palette: p } }, '*')
+    }
+  } catch(_) {}
+  this.value = ''
+})
+
+onmessage = async function(event) {
+  const msg = event.data.pluginMessage
+  if (!msg) return
+  if (msg.type === 'palettes-updated') {
+    savedPalettes = msg.palettes || []
+    renderPaletteList()
+    return
+  }
+  if (msg.type === 'no-selection') { showMessage('Select a layer to scan its colors.'); return }
+  if (msg.type === 'error') { showMessage(msg.message); return }
+  if (msg.type === 'scan-result') {
+    if (msg.palettes) savedPalettes = msg.palettes
+    solidEntries = (msg.solidColors || []).map(hex => ({ original: hex, current: hex }))
+    loadedImages = (msg.images || []).map(img => ({ hash: img.hash, bytes: img.bytes }))
+    const badge = document.getElementById('node-badge')
+    const badgeText = document.getElementById('badge-text')
+    if (msg.nodeCount > 1) {
+      badgeText.textContent = msg.nodeCount + ' nodes selected — changes apply to all'
+      badge.style.display = 'flex'
+    } else {
+      badge.style.display = 'none'
+    }
+    if (msg.images && msg.images.length > 0) {
+      showLoading('Reading image colors…')
+      await processImageColors(msg.images)
+    } else {
+      imageEntries = []
+    }
+    renderAll()
+  }
+}
+</script>
+</body>
+</html>
