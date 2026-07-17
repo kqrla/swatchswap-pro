@@ -1,9 +1,10 @@
 const TOOL_ID = 'swatchswap-pro'
 const DISPLAY_NAME = 'SwatchSwap Pro'
 const PALETTE_STORAGE_KEY = 'swatchswap.palettes'
+const PAIRING_STORAGE_KEY = 'swatchswap.pairings'
 
 figma.root.setRelaunchData({ [TOOL_ID]: DISPLAY_NAME })
-figma.showUI(__html__, { width: 320, height: 460 })
+figma.showUI(__html__, { width: 320, height: 500 })
 
 function getAllNodes(root) {
   const nodes = [root]
@@ -31,15 +32,15 @@ function colorsEqual(a, b) {
          Math.abs(a.b - b.b) < 0.002
 }
 
-async function loadPalettes() {
+async function loadStorage(key) {
   try {
-    const raw = await figma.clientStorage.getAsync(PALETTE_STORAGE_KEY)
+    const raw = await figma.clientStorage.getAsync(key)
     return Array.isArray(raw) ? raw : []
   } catch { return [] }
 }
 
-async function savePalettes(palettes) {
-  await figma.clientStorage.setAsync(PALETTE_STORAGE_KEY, palettes)
+async function saveStorage(key, data) {
+  await figma.clientStorage.setAsync(key, data)
 }
 
 async function scanAndSend() {
@@ -92,7 +93,8 @@ async function scanAndSend() {
     } catch (_) {}
   }
 
-  const palettes = await loadPalettes()
+  const palettes = await loadStorage(PALETTE_STORAGE_KEY)
+  const pairings = await loadStorage(PAIRING_STORAGE_KEY)
 
   figma.ui.postMessage({
     type: 'scan-result',
@@ -102,6 +104,7 @@ async function scanAndSend() {
     nodeNames: sel.map(n => n.name),
     nodeCount: sel.length,
     palettes,
+    pairings,
   })
 }
 
@@ -110,26 +113,56 @@ scanAndSend()
 
 figma.ui.onmessage = async (msg) => {
   if (msg.type === 'resize') {
-    figma.ui.resize(320, Math.max(120, Math.min(900, Math.round(msg.height))))
+    figma.ui.resize(320, Math.max(120, Math.min(1000, Math.round(msg.height))))
     return
   }
 
   if (msg.type === 'save-palette') {
-    const palettes = await loadPalettes()
+    const palettes = await loadStorage(PALETTE_STORAGE_KEY)
     const existing = palettes.findIndex(p => p.id === msg.palette.id)
     if (existing >= 0) palettes[existing] = msg.palette
     else palettes.push(msg.palette)
-    await savePalettes(palettes)
+    await saveStorage(PALETTE_STORAGE_KEY, palettes)
     figma.ui.postMessage({ type: 'palettes-updated', palettes })
     figma.notify('Palette saved.')
     return
   }
 
   if (msg.type === 'delete-palette') {
-    const palettes = await loadPalettes()
+    const palettes = await loadStorage(PALETTE_STORAGE_KEY)
     const updated = palettes.filter(p => p.id !== msg.id)
-    await savePalettes(updated)
+    await saveStorage(PALETTE_STORAGE_KEY, updated)
     figma.ui.postMessage({ type: 'palettes-updated', palettes: updated })
+    return
+  }
+
+  if (msg.type === 'save-pairing') {
+    const pairings = await loadStorage(PAIRING_STORAGE_KEY)
+    const existing = pairings.findIndex(p => p.id === msg.pairing.id)
+    if (existing >= 0) pairings[existing] = msg.pairing
+    else pairings.push(msg.pairing)
+    await saveStorage(PAIRING_STORAGE_KEY, pairings)
+    figma.ui.postMessage({ type: 'pairings-updated', pairings })
+    figma.notify('Pairing saved.')
+    return
+  }
+
+  if (msg.type === 'delete-pairing') {
+    const pairings = await loadStorage(PAIRING_STORAGE_KEY)
+    const updated = pairings.filter(p => p.id !== msg.id)
+    await saveStorage(PAIRING_STORAGE_KEY, updated)
+    figma.ui.postMessage({ type: 'pairings-updated', pairings: updated })
+    return
+  }
+
+  if (msg.type === 'import-pairings') {
+    const pairings = await loadStorage(PAIRING_STORAGE_KEY)
+    for (const p of msg.pairings) {
+      if (!pairings.some(x => x.id === p.id)) pairings.push(p)
+    }
+    await saveStorage(PAIRING_STORAGE_KEY, pairings)
+    figma.ui.postMessage({ type: 'pairings-updated', pairings })
+    figma.notify(`Imported ${msg.pairings.length} pairing(s).`)
     return
   }
 
@@ -146,7 +179,6 @@ figma.ui.onmessage = async (msg) => {
       .filter(r => r.from.toLowerCase() !== r.to.toLowerCase())
       .map(r => ({ fromRGB: hexToRgb(r.from), toRGB: hexToRgb(r.to) }))
 
-    // build hash remap once — same recolored image applies to all nodes sharing that hash
     const hashRemap = new Map()
     for (const { oldHash, bytes } of (msg.modifiedImages || [])) {
       try {

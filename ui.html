@@ -30,10 +30,7 @@
       font-size: var(--body-medium-fontSize);
       cursor: pointer;
     }
-    .tab.active {
-      color: var(--figma-color-text);
-      border-bottom-color: var(--figma-color-text);
-    }
+    .tab.active { color: var(--figma-color-text); border-bottom-color: var(--figma-color-text); }
     .tab:hover:not(.active) { color: var(--figma-color-text); }
 
     .state-msg { padding: var(--spacer-2) var(--spacer-3); color: var(--figma-color-text-secondary); font-family: var(--font-family); font-size: var(--body-medium-fontSize); text-align: center; }
@@ -44,103 +41,60 @@
     .color-row fig-input-color { flex: 1; }
 
     #node-badge {
-      display: none;
-      align-items: center;
-      gap: 6px;
+      display: none; align-items: center; gap: 6px;
       padding: 4px var(--spacer-3);
       background: var(--figma-color-bg-secondary);
       border-bottom: 1px solid var(--figma-color-border);
-      font-family: var(--font-family);
-      font-size: 11px;
-      color: var(--figma-color-text-secondary);
+      font-family: var(--font-family); font-size: 11px; color: var(--figma-color-text-secondary);
     }
-    #node-badge .badge-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--figma-color-icon-brand);
-      flex-shrink: 0;
+    #node-badge .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--figma-color-icon-brand); flex-shrink: 0; }
+
+    .contrast-tag {
+      display: inline-block; font-size: 10px; font-weight: 600;
+      padding: 1px 5px; border-radius: 3px; margin-left: 4px; flex-shrink: 0;
+    }
+    .contrast-tag.pass { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .contrast-tag.fail { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .pair-tag {
+      display: inline-block; font-size: 10px;
+      padding: 1px 5px; border-radius: 3px; margin-left: 4px; flex-shrink: 0;
+      background: rgba(124,109,255,0.15); color: #7c6dff;
     }
 
+    /* palette tab */
     #panel-palettes { display: flex; flex-direction: column; }
-    .palette-save-row {
-      display: flex; align-items: center; gap: var(--spacer-2);
-      padding: var(--spacer-2) var(--spacer-3);
-      border-bottom: 1px solid var(--figma-color-border);
-    }
-    .palette-save-row input {
-      flex: 1;
-      background: var(--figma-color-bg-secondary);
-      border: 1px solid var(--figma-color-border);
-      border-radius: 4px;
-      color: var(--figma-color-text);
-      font-family: var(--font-family);
-      font-size: var(--body-medium-fontSize);
-      padding: 4px 8px;
-      outline: none;
-    }
+    .palette-save-row { display: flex; align-items: center; gap: var(--spacer-2); padding: var(--spacer-2) var(--spacer-3); border-bottom: 1px solid var(--figma-color-border); }
+    .palette-save-row input { flex: 1; background: var(--figma-color-bg-secondary); border: 1px solid var(--figma-color-border); border-radius: 4px; color: var(--figma-color-text); font-family: var(--font-family); font-size: var(--body-medium-fontSize); padding: 4px 8px; outline: none; }
     .palette-save-row input:focus { border-color: var(--figma-color-border-selected); }
     .palette-save-row input::placeholder { color: var(--figma-color-text-disabled); }
-    .btn-sm {
-      background: var(--figma-color-bg-brand);
-      color: var(--figma-color-text-onbrand);
-      border: none; border-radius: 4px;
-      font-family: var(--font-family); font-size: 11px; font-weight: 500;
-      padding: 5px 10px; cursor: pointer; white-space: nowrap; flex-shrink: 0;
-    }
+    .btn-sm { background: var(--figma-color-bg-brand); color: var(--figma-color-text-onbrand); border: none; border-radius: 4px; font-family: var(--font-family); font-size: 11px; font-weight: 500; padding: 5px 10px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
     .btn-sm:disabled { opacity: 0.4; cursor: not-allowed; }
-    .btn-sm.ghost {
-      background: var(--figma-color-bg-secondary);
-      color: var(--figma-color-text-secondary);
-      border: 1px solid var(--figma-color-border);
-    }
+    .btn-sm.ghost { background: var(--figma-color-bg-secondary); color: var(--figma-color-text-secondary); border: 1px solid var(--figma-color-border); }
     .btn-sm.ghost:hover { color: var(--figma-color-text); border-color: var(--figma-color-border-strong); }
-    .palette-empty {
-      padding: var(--spacer-3) var(--spacer-3);
-      color: var(--figma-color-text-secondary);
-      font-family: var(--font-family);
-      font-size: var(--body-medium-fontSize);
-      text-align: center;
-      line-height: 1.5;
-    }
-    .palette-item {
-      display: flex; align-items: center; gap: var(--spacer-2);
-      padding: 6px var(--spacer-3);
-      border-bottom: 1px solid var(--figma-color-border);
-    }
-    .palette-item:last-child { border-bottom: none; }
-    .palette-dots { display: flex; gap: 2px; flex-shrink: 0; }
-    .palette-dot {
-      width: 14px; height: 14px; border-radius: 3px;
-      border: 1px solid rgba(0,0,0,0.08); flex-shrink: 0;
-    }
-    .palette-name {
-      flex: 1;
-      font-family: var(--font-family);
-      font-size: var(--body-medium-fontSize);
-      color: var(--figma-color-text);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .palette-actions { display: flex; gap: 4px; flex-shrink: 0; }
-    .btn-load {
-      background: none;
-      border: 1px solid var(--figma-color-border);
-      border-radius: 4px;
-      color: var(--figma-color-text-secondary);
-      font-family: var(--font-family); font-size: 11px;
-      padding: 3px 8px; cursor: pointer;
-    }
+    .palette-empty, .pair-list-empty { padding: var(--spacer-3); color: var(--figma-color-text-secondary); font-family: var(--font-family); font-size: var(--body-medium-fontSize); text-align: center; line-height: 1.5; }
+    .palette-item, .pair-item { display: flex; align-items: center; gap: var(--spacer-2); padding: 6px var(--spacer-3); border-bottom: 1px solid var(--figma-color-border); }
+    .palette-dots, .pair-dots { display: flex; gap: 2px; flex-shrink: 0; }
+    .palette-dot, .pair-dot { width: 14px; height: 14px; border-radius: 3px; border: 1px solid rgba(0,0,0,0.08); }
+    .palette-name, .pair-name { flex: 1; font-family: var(--font-family); font-size: var(--body-medium-fontSize); color: var(--figma-color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pair-type-label { font-size: 10px; color: var(--figma-color-text-secondary); font-family: var(--font-family); flex-shrink: 0; }
+    .palette-actions, .pair-actions { display: flex; gap: 4px; flex-shrink: 0; }
+    .btn-load { background: none; border: 1px solid var(--figma-color-border); border-radius: 4px; color: var(--figma-color-text-secondary); font-family: var(--font-family); font-size: 11px; padding: 3px 8px; cursor: pointer; }
     .btn-load:hover { color: var(--figma-color-text); border-color: var(--figma-color-border-strong); }
-    .btn-del {
-      background: none; border: none;
-      color: var(--figma-color-text-secondary);
-      font-size: 14px; line-height: 1;
-      cursor: pointer; padding: 2px 4px; border-radius: 3px;
-    }
+    .btn-del { background: none; border: none; color: var(--figma-color-text-secondary); font-size: 14px; line-height: 1; cursor: pointer; padding: 2px 4px; border-radius: 3px; }
     .btn-del:hover { color: var(--figma-color-text-danger); background: var(--figma-color-bg-danger-secondary); }
-    .palette-io {
-      display: flex; gap: var(--spacer-2);
-      padding: var(--spacer-2) var(--spacer-3);
-      border-top: 1px solid var(--figma-color-border);
-    }
+    .io-row { display: flex; gap: var(--spacer-2); padding: var(--spacer-2) var(--spacer-3); border-top: 1px solid var(--figma-color-border); }
+
+    /* pair form */
+    .pair-form { padding: var(--spacer-2) var(--spacer-3); display: flex; flex-direction: column; gap: 8px; border-bottom: 1px solid var(--figma-color-border); }
+    .pair-form-row { display: flex; align-items: center; gap: var(--spacer-2); }
+    .pair-form-row label { font-family: var(--font-family); font-size: 11px; color: var(--figma-color-text-secondary); width: 44px; flex-shrink: 0; }
+    .pair-form-row input { flex: 1; background: var(--figma-color-bg-secondary); border: 1px solid var(--figma-color-border); border-radius: 4px; color: var(--figma-color-text); font-family: var(--font-family); font-size: 12px; padding: 4px 6px; outline: none; }
+    .pair-form-row input:focus { border-color: var(--figma-color-border-selected); }
+    .pair-form-row select { flex: 1; background: var(--figma-color-bg-secondary); border: 1px solid var(--figma-color-border); border-radius: 4px; color: var(--figma-color-text); font-family: var(--font-family); font-size: 12px; padding: 4px 6px; cursor: pointer; }
+    .pair-color-picks { display: flex; gap: 4px; flex-wrap: wrap; }
+    .pair-color-pick { width: 22px; height: 22px; border-radius: 4px; border: 2px solid transparent; cursor: pointer; }
+    .pair-color-pick:hover { border-color: rgba(255,255,255,0.3); }
+    .pair-color-pick.selected { border-color: var(--figma-color-border-selected); }
   </style>
 </head>
 <body>
@@ -148,16 +102,13 @@
   <div id="tab-bar">
     <button id="tab-colors" class="tab active">Colors</button>
     <button id="tab-palettes" class="tab">Palettes</button>
+    <button id="tab-pairings" class="tab">Pairs</button>
   </div>
 
   <div id="panel-colors">
     <div id="node-badge"><div class="badge-dot"></div><span id="badge-text"></span></div>
-    <fig-content id="main-content">
-      <div class="state-msg">Select a layer to scan its colors.</div>
-    </fig-content>
-    <fig-footer id="footer" style="display:none">
-      <fig-button id="apply-btn" type="submit" disabled>Apply colors</fig-button>
-    </fig-footer>
+    <fig-content id="main-content"><div class="state-msg">Select a layer to scan its colors.</div></fig-content>
+    <fig-footer id="footer" style="display:none"><fig-button id="apply-btn" type="submit" disabled>Apply colors</fig-button></fig-footer>
   </div>
 
   <div id="panel-palettes" style="display:none">
@@ -165,323 +116,324 @@
       <input type="text" id="palette-name" placeholder="Name this palette…" maxlength="40">
       <button class="btn-sm" id="save-palette-btn">Save current</button>
     </div>
-    <div id="palette-list"><div class="palette-empty">No palettes saved yet.<br>Set your colors then save them here.</div></div>
-    <div class="palette-io">
+    <div id="palette-list"><div class="palette-empty">No palettes saved yet.</div></div>
+    <div class="io-row">
       <button class="btn-sm ghost" id="export-btn">Export JSON</button>
       <button class="btn-sm ghost" id="import-btn">Import JSON</button>
       <input type="file" id="import-file" accept=".json" style="display:none">
     </div>
   </div>
+
+  <div id="panel-pairings" style="display:none">
+    <div class="pair-form">
+      <div class="pair-form-row"><label>Label</label><input type="text" id="pair-label" placeholder="e.g. text / bg" maxlength="40"></div>
+      <div class="pair-form-row"><label>Type</label>
+        <select id="pair-type">
+          <option value="contrast">Contrast (WCAG)</option>
+          <option value="tint-shade">Tint / shade</option>
+          <option value="complementary">Complementary</option>
+          <option value="analogous">Analogous</option>
+        </select>
+      </div>
+      <div class="pair-form-row" id="pair-ratio-row"><label>Ratio</label>
+        <select id="pair-ratio">
+          <option value="4.5">4.5:1 (AA normal)</option>
+          <option value="3">3:1 (AA large)</option>
+          <option value="7">7:1 (AAA)</option>
+        </select>
+      </div>
+      <div class="pair-form-row"><label>Colors</label><div class="pair-color-picks" id="pair-color-picks"></div></div>
+      <button class="btn-sm" id="btn-add-pair" disabled>Add pairing</button>
+    </div>
+    <div id="pair-list"><div class="pair-list-empty">No pairings yet.</div></div>
+    <div class="io-row">
+      <button class="btn-sm ghost" id="export-pairs-btn">Export JSON</button>
+      <button class="btn-sm ghost" id="import-pairs-btn">Import JSON</button>
+      <input type="file" id="import-pairs-file" accept=".json" style="display:none">
+    </div>
+  </div>
 </div>
 
 <script>
+// ---- oklch color math (inline for plugin sandbox) ----
+function srgbToLinear(v) { return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4) }
+function linearToSrgb(v) { return v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1/2.4) - 0.055 }
+function hexToRgbNorm(hex) { const h = hex.replace('#',''); return { r: parseInt(h.slice(0,2),16)/255, g: parseInt(h.slice(2,4),16)/255, b: parseInt(h.slice(4,6),16)/255 } }
+function rgbNormToHex(r,g,b) { const c = v => Math.max(0,Math.min(255,Math.round(v*255))); return '#'+[c(r),c(g),c(b)].map(v=>v.toString(16).padStart(2,'0').toUpperCase()).join('') }
+function rgbToOklab(r,g,b) { const lr=srgbToLinear(r),lg=srgbToLinear(g),lb=srgbToLinear(b); const l_=Math.cbrt(0.4122214708*lr+0.5363325363*lg+0.0514459929*lb); const m_=Math.cbrt(0.2119034982*lr+0.6806995451*lg+0.1073969566*lb); const s_=Math.cbrt(0.0883024619*lr+0.2817188376*lg+0.6299787005*lb); return { L:0.2104542553*l_+0.7936177850*m_-0.0040720468*s_, a:1.9779984951*l_-2.4285922050*m_+0.4505937099*s_, b:0.0259040371*l_+0.7827717662*m_-0.8086757660*s_ } }
+function oklabToRgb(L,a,b) { const l_=L+0.3963377774*a+0.2158037573*b; const m_=L-0.1055613458*a-0.0638541728*b; const s_=L-0.0894841775*a-1.2914855480*b; const l=l_*l_*l_,m=m_*m_*m_,s=s_*s_*s_; return { r:linearToSrgb(+4.0767416621*l-3.3077115913*m+0.2309699292*s), g:linearToSrgb(-1.2684380046*l+2.6097574011*m-0.3413193965*s), b:linearToSrgb(-0.0041960863*l-0.7034186147*m+1.7076147010*s) } }
+function oklabToOklch(L,a,b) { return { L, C: Math.sqrt(a*a+b*b), H: (Math.atan2(b,a)*180/Math.PI+360)%360 } }
+function oklchToOklab(L,C,H) { const r=H*Math.PI/180; return { L, a:C*Math.cos(r), b:C*Math.sin(r) } }
+function hexToOklch(hex) { const {r,g,b}=hexToRgbNorm(hex); const lab=rgbToOklab(r,g,b); return oklabToOklch(lab.L,lab.a,lab.b) }
+function oklchToHex(L,C,H) { const lab=oklchToOklab(Math.max(0,Math.min(1,L)),Math.max(0,C),H); const rgb=oklabToRgb(lab.L,lab.a,lab.b); return rgbNormToHex(Math.max(0,Math.min(1,rgb.r)),Math.max(0,Math.min(1,rgb.g)),Math.max(0,Math.min(1,rgb.b))) }
+
+function relativeLuminance(hex) { const {r,g,b}=hexToRgbNorm(hex); return 0.2126*srgbToLinear(r)+0.7152*srgbToLinear(g)+0.0722*srgbToLinear(b) }
+function contrastRatio(a,b) { const la=relativeLuminance(a),lb=relativeLuminance(b); return (Math.max(la,lb)+0.05)/(Math.min(la,lb)+0.05) }
+
+function adjustForContrast(refHex, partnerHex, target) {
+  const refLum = relativeLuminance(refHex)
+  const pLch = hexToOklch(partnerHex)
+  const refIsLight = refLum > 0.18
+  let reqLum = refIsLight ? (refLum+0.05)/target-0.05 : target*(refLum+0.05)-0.05
+  reqLum = Math.max(0, Math.min(1, reqLum))
+  let lo=0, hi=1
+  for (let i=0;i<32;i++) { const mid=(lo+hi)/2; if (relativeLuminance(oklchToHex(mid,pLch.C,pLch.H))<reqLum) lo=mid; else hi=mid }
+  return oklchToHex((lo+hi)/2, pLch.C, pLch.H)
+}
+function applyTintShadeFollow(origBase, newBase, variants) {
+  const o=hexToOklch(origBase), n=hexToOklch(newBase)
+  const dL=n.L-o.L, dC=n.C-o.C, dH=n.H-o.H
+  return variants.map(hex => { const l=hexToOklch(hex); return oklchToHex(Math.max(0,Math.min(1,l.L+dL)),Math.max(0,l.C+dC),((l.H+dH)%360+360)%360) })
+}
+function applyHueFollow(origAnchor, newAnchor, partners) {
+  const dH = hexToOklch(newAnchor).H - hexToOklch(origAnchor).H
+  return partners.map(hex => { const l=hexToOklch(hex); return oklchToHex(l.L, l.C, ((l.H+dH)%360+360)%360) })
+}
+function applyPairingLogic(pairing, changedIdx, newHex) {
+  const colors = pairing.colors.map(c => ({...c}))
+  colors[changedIdx].hex = newHex.toUpperCase()
+  if (pairing.type==='contrast') {
+    for (let i=0;i<colors.length;i++) { if (i===changedIdx) continue; colors[i].hex = adjustForContrast(newHex, colors[i].hex, pairing.targetContrastRatio||4.5) }
+  } else if (pairing.type==='tint-shade') {
+    const orig = pairing.originalColors[changedIdx].hex
+    const others = []; for (let i=0;i<colors.length;i++) { if (i!==changedIdx) others.push(pairing.originalColors[i].hex) }
+    const adj = applyTintShadeFollow(orig, newHex, others); let j=0; for (let i=0;i<colors.length;i++) { if (i!==changedIdx) colors[i].hex=adj[j++] }
+  } else if (pairing.type==='complementary'||pairing.type==='analogous') {
+    const orig = pairing.originalColors[changedIdx].hex
+    const others = []; for (let i=0;i<colors.length;i++) { if (i!==changedIdx) others.push(pairing.originalColors[i].hex) }
+    const adj = applyHueFollow(orig, newHex, others); let j=0; for (let i=0;i<colors.length;i++) { if (i!==changedIdx) colors[i].hex=adj[j++] }
+  }
+  return colors
+}
+
+// ---- quantize + recolor (unchanged from v1) ----
 function quantizeColors(pixelDataList, maxColors) {
   const buckets = new Map()
-  for (const data of pixelDataList) {
-    for (let i = 0; i < data.length; i += 4) {
-      if (data[i + 3] < 30) continue
-      const r = data[i] >> 3, g = data[i+1] >> 3, b = data[i+2] >> 3
-      const key = (r << 10) | (g << 5) | b
-      buckets.set(key, (buckets.get(key) || 0) + 1)
-    }
-  }
-  const sorted = Array.from(buckets.entries()).sort((a, b) => b[1] - a[1])
+  for (const data of pixelDataList) { for (let i=0;i<data.length;i+=4) { if(data[i+3]<30)continue; const key=((data[i]>>3)<<10)|((data[i+1]>>3)<<5)|(data[i+2]>>3); buckets.set(key,(buckets.get(key)||0)+1) } }
+  const sorted = Array.from(buckets.entries()).sort((a,b)=>b[1]-a[1])
   const kept = []
-  outer: for (const [key] of sorted) {
-    const r = ((key >> 10) & 0x1f) << 3
-    const g = ((key >> 5) & 0x1f) << 3
-    const b = (key & 0x1f) << 3
-    for (const prev of kept) {
-      const dr = r-prev.r, dg = g-prev.g, db = b-prev.b
-      if (Math.sqrt(dr*dr+dg*dg+db*db) < 30) continue outer
-    }
-    kept.push({ r, g, b })
-    if (kept.length >= maxColors) break
-  }
+  outer: for (const [key] of sorted) { const r=((key>>10)&0x1f)<<3,g=((key>>5)&0x1f)<<3,b=(key&0x1f)<<3; for (const p of kept) { const dr=r-p.r,dg=g-p.g,db=b-p.b; if(Math.sqrt(dr*dr+dg*dg+db*db)<30) continue outer }; kept.push({r,g,b}); if(kept.length>=maxColors)break }
   return kept
 }
-function toHex(r, g, b) {
-  return '#' + [r,g,b].map(v => Math.max(0,Math.min(255,v)).toString(16).padStart(2,'0').toUpperCase()).join('')
-}
-function hexToRgb(hex) {
-  const h = hex.replace('#','')
-  return { r: parseInt(h.slice(0,2),16), g: parseInt(h.slice(2,4),16), b: parseInt(h.slice(4,6),16) }
-}
+function toHex(r,g,b) { return '#'+[r,g,b].map(v=>Math.max(0,Math.min(255,v)).toString(16).padStart(2,'0').toUpperCase()).join('') }
+function hexToRgb(hex) { const h=hex.replace('#',''); return {r:parseInt(h.slice(0,2),16),g:parseInt(h.slice(2,4),16),b:parseInt(h.slice(4,6),16)} }
 function colorDist(r1,g1,b1,r2,g2,b2) { return Math.sqrt((r1-r2)**2+(g1-g2)**2+(b1-b2)**2) }
 
-let solidEntries = [], imageEntries = [], loadedImages = [], savedPalettes = []
-let lastH = 0, raf = 0
+let solidEntries=[], imageEntries=[], loadedImages=[], savedPalettes=[], savedPairings=[]
+let selectedPairColors = []
+let lastH=0, raf=0
 
-function measureH() {
-  const root = document.getElementById('plugin-root')
-  if (!root) return 0
-  let h = Math.ceil(root.getBoundingClientRect().height)
-  const d = document.querySelector('dialog.fig-fill-picker-dialog[open]')
-  if (d) h = Math.max(h, Math.ceil(d.getBoundingClientRect().bottom))
-  return h
-}
-function reportH() { const h = measureH(); if (h && h !== lastH) { lastH = h; parent.postMessage({ pluginMessage: { type: 'resize', height: h } }, '*') } }
-const root$ = document.getElementById('plugin-root')
-if (root$ && typeof ResizeObserver !== 'undefined') new ResizeObserver(() => { if (raf) cancelAnimationFrame(raf); raf = requestAnimationFrame(reportH) }).observe(root$)
-new MutationObserver(() => { if (raf) cancelAnimationFrame(raf); raf = requestAnimationFrame(reportH) }).observe(document.body, { childList: true, attributes: true, attributeFilter: ['open'], subtree: true })
+function measureH() { const r=document.getElementById('plugin-root'); if(!r)return 0; let h=Math.ceil(r.getBoundingClientRect().height); const d=document.querySelector('dialog.fig-fill-picker-dialog[open]'); if(d) h=Math.max(h,Math.ceil(d.getBoundingClientRect().bottom)); return h }
+function reportH() { const h=measureH(); if(h&&h!==lastH){lastH=h; parent.postMessage({pluginMessage:{type:'resize',height:h}},'*')} }
+const root$=document.getElementById('plugin-root')
+if(root$&&typeof ResizeObserver!=='undefined') new ResizeObserver(()=>{if(raf)cancelAnimationFrame(raf);raf=requestAnimationFrame(reportH)}).observe(root$)
+new MutationObserver(()=>{if(raf)cancelAnimationFrame(raf);raf=requestAnimationFrame(reportH)}).observe(document.body,{childList:true,attributes:true,attributeFilter:['open'],subtree:true})
 
-const tabColors = document.getElementById('tab-colors')
-const tabPalettes = document.getElementById('tab-palettes')
-const panelColors = document.getElementById('panel-colors')
-const panelPalettes = document.getElementById('panel-palettes')
+// ---- tabs ----
+const panels = { 'tab-colors': 'panel-colors', 'tab-palettes': 'panel-palettes', 'tab-pairings': 'panel-pairings' }
+document.querySelectorAll('#tab-bar .tab').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('#tab-bar .tab').forEach(b => b.classList.remove('active'))
+  btn.classList.add('active')
+  Object.values(panels).forEach(p => document.getElementById(p).style.display = 'none')
+  document.getElementById(panels[btn.id]).style.display = ''
+  if (btn.id === 'tab-pairings') { renderPairColorPicks(); renderPairList() }
+}))
 
-tabColors.addEventListener('click', () => {
-  tabColors.classList.add('active'); tabPalettes.classList.remove('active')
-  panelColors.style.display = ''; panelPalettes.style.display = 'none'
-})
-tabPalettes.addEventListener('click', () => {
-  tabPalettes.classList.add('active'); tabColors.classList.remove('active')
-  panelColors.style.display = 'none'; panelPalettes.style.display = ''
-  renderPaletteList()
+document.getElementById('pair-type').addEventListener('change', () => {
+  document.getElementById('pair-ratio-row').style.display = document.getElementById('pair-type').value === 'contrast' ? '' : 'none'
 })
 
-function showMessage(msg) {
-  document.getElementById('main-content').innerHTML = '<div class="state-msg">' + msg + '</div>'
-  document.getElementById('footer').style.display = 'none'
-  document.getElementById('node-badge').style.display = 'none'
-}
-function showLoading(msg) {
-  document.getElementById('main-content').innerHTML = '<div class="loading-msg">' + msg + '</div>'
-  document.getElementById('footer').style.display = 'none'
-}
+function showMessage(msg) { document.getElementById('main-content').innerHTML='<div class="state-msg">'+msg+'</div>'; document.getElementById('footer').style.display='none'; document.getElementById('node-badge').style.display='none' }
+function showLoading(msg) { document.getElementById('main-content').innerHTML='<div class="loading-msg">'+msg+'</div>'; document.getElementById('footer').style.display='none' }
+
+function findPairingsForColor(hex) { return savedPairings.filter(p => p.colors.some(c => c.hex.toUpperCase() === hex.toUpperCase())) }
 
 function buildColorRow(originalHex, index, entries) {
-  const row = document.createElement('div')
-  row.className = 'color-row'
-  const swatch = document.createElement('div')
-  swatch.className = 'orig-swatch'
-  swatch.style.background = originalHex
-  swatch.title = originalHex.toLowerCase()
-  const arrow = document.createElement('span')
-  arrow.className = 'arrow'
-  arrow.textContent = '→'
+  const row = document.createElement('div'); row.className = 'color-row'
+  const swatch = document.createElement('div'); swatch.className = 'orig-swatch'; swatch.style.background = originalHex; swatch.title = originalHex.toLowerCase()
+  const arrow = document.createElement('span'); arrow.className = 'arrow'; arrow.textContent = '→'
   const picker = document.createElement('fig-input-color')
-  picker.setAttribute('picker', 'figma-native')
-  picker.setAttribute('alpha', 'false')
-  picker.setAttribute('value', entries[index].current)
-  picker.setAttribute('full', '')
+  picker.setAttribute('picker', 'figma-native'); picker.setAttribute('alpha', 'false'); picker.setAttribute('value', entries[index].current); picker.setAttribute('full', '')
+
   const update = e => {
     const val = (e.detail && e.detail.value) ? e.detail.value : picker.value
-    entries[index].current = val.startsWith('#') ? val.toUpperCase() : ('#' + val.toUpperCase())
+    const hex = val.startsWith('#') ? val.toUpperCase() : ('#' + val.toUpperCase())
+    entries[index].current = hex
+
+    // auto-adjust paired colors
+    const matched = findPairingsForColor(originalHex)
+    for (const pairing of matched) {
+      const pIdx = pairing.colors.findIndex(c => c.hex.toUpperCase() === originalHex.toUpperCase())
+      if (pIdx < 0) continue
+      const adjusted = applyPairingLogic(pairing, pIdx, hex)
+      for (const ac of adjusted) {
+        if (ac.hex.toUpperCase() === hex.toUpperCase()) continue
+        const origMatch = pairing.colors.find(c => c.hex.toUpperCase() === ac.hex.toUpperCase())
+        if (origMatch) continue // skip the one we just changed
+        const partnerOrigHex = pairing.colors.find(c => c.hex.toUpperCase() !== originalHex.toUpperCase())
+        if (!partnerOrigHex) continue
+        const target = [...solidEntries, ...imageEntries].find(e => e.original.toUpperCase() === partnerOrigHex.hex.toUpperCase())
+        if (target) target.current = ac.hex
+      }
+    }
+    renderAll()
     checkChanged()
   }
   picker.addEventListener('change', update)
   picker.addEventListener('input', update)
+
   row.appendChild(swatch); row.appendChild(arrow); row.appendChild(picker)
+
+  // show pairing + contrast badges
+  const entryPairings = findPairingsForColor(originalHex)
+  if (entryPairings.length > 0) {
+    const tag = document.createElement('span'); tag.className = 'pair-tag'
+    tag.textContent = entryPairings[0].type === 'contrast' ? '⇅' : '↔'
+    tag.title = 'paired: ' + entryPairings[0].label
+    row.appendChild(tag)
+  }
+  for (const p of entryPairings) {
+    if (p.type !== 'contrast') continue
+    const other = p.colors.find(c => c.hex.toUpperCase() !== originalHex.toUpperCase())
+    if (!other) continue
+    const otherEntry = [...solidEntries,...imageEntries].find(e => e.original.toUpperCase() === other.hex.toUpperCase())
+    if (!otherEntry) continue
+    const ratio = contrastRatio(entries[index].current, otherEntry.current)
+    const pass = ratio >= (p.targetContrastRatio || 4.5)
+    const ct = document.createElement('span'); ct.className = 'contrast-tag ' + (pass?'pass':'fail')
+    ct.textContent = ratio.toFixed(1) + ':1'
+    ct.title = pass ? 'meets target' : 'below ' + (p.targetContrastRatio||4.5) + ':1'
+    row.appendChild(ct)
+  }
   return row
 }
 
 function renderAll() {
-  const content = document.getElementById('main-content')
-  content.innerHTML = ''
+  const content = document.getElementById('main-content'); content.innerHTML = ''
   if (solidEntries.length > 0) {
-    const g = document.createElement('fig-group')
-    g.setAttribute('name', 'Vector colors (' + solidEntries.length + ')')
-    solidEntries.forEach((e, i) => g.appendChild(buildColorRow(e.original, i, solidEntries)))
-    content.appendChild(g)
+    const g = document.createElement('fig-group'); g.setAttribute('name', 'Vector colors (' + solidEntries.length + ')')
+    solidEntries.forEach((e,i) => g.appendChild(buildColorRow(e.original, i, solidEntries))); content.appendChild(g)
   }
   if (imageEntries.length > 0) {
-    const g = document.createElement('fig-group')
-    g.setAttribute('name', 'Image colors (' + imageEntries.length + ')')
-    imageEntries.forEach((e, i) => g.appendChild(buildColorRow(e.original, i, imageEntries)))
-    content.appendChild(g)
+    const g = document.createElement('fig-group'); g.setAttribute('name', 'Image colors (' + imageEntries.length + ')')
+    imageEntries.forEach((e,i) => g.appendChild(buildColorRow(e.original, i, imageEntries))); content.appendChild(g)
   }
   document.getElementById('footer').style.display = ''
   checkChanged()
 }
-
 function checkChanged() {
-  const changed = solidEntries.some(e => e.original.toLowerCase() !== e.current.toLowerCase()) ||
-                  imageEntries.some(e => e.original.toLowerCase() !== e.current.toLowerCase())
+  const changed = solidEntries.some(e=>e.original.toLowerCase()!==e.current.toLowerCase()) || imageEntries.some(e=>e.original.toLowerCase()!==e.current.toLowerCase())
   document.getElementById('apply-btn').toggleAttribute('disabled', !changed)
 }
 
 async function processImageColors(images) {
-  if (images.length === 0) { imageEntries = []; return }
-  const pixelDataList = []
-  for (const { bytes } of images) {
-    const blob = new Blob([new Uint8Array(bytes)], { type: 'image/png' })
-    let bitmap
-    try { bitmap = await createImageBitmap(blob) } catch(e) { continue }
-    const scale = Math.min(1, 150 / Math.max(bitmap.width, bitmap.height))
-    const w = Math.max(1, Math.floor(bitmap.width * scale))
-    const h = Math.max(1, Math.floor(bitmap.height * scale))
-    const canvas = new OffscreenCanvas(w, h)
-    const ctx = canvas.getContext('2d')
-    ctx.drawImage(bitmap, 0, 0, w, h)
-    pixelDataList.push(ctx.getImageData(0, 0, w, h).data)
-  }
-  const colors = quantizeColors(pixelDataList, 8)
-  imageEntries = colors.map(c => { const hex = toHex(c.r, c.g, c.b); return { original: hex, current: hex } })
+  if(!images.length){imageEntries=[];return}
+  const pxList=[]
+  for (const {bytes} of images) { const blob=new Blob([new Uint8Array(bytes)],{type:'image/png'}); let bmp; try{bmp=await createImageBitmap(blob)}catch{continue}; const s=Math.min(1,150/Math.max(bmp.width,bmp.height)); const w=Math.max(1,Math.floor(bmp.width*s)),h=Math.max(1,Math.floor(bmp.height*s)); const c=new OffscreenCanvas(w,h),ctx=c.getContext('2d'); ctx.drawImage(bmp,0,0,w,h); pxList.push(ctx.getImageData(0,0,w,h).data) }
+  const colors=quantizeColors(pxList,8)
+  imageEntries=colors.map(c=>{const hex=toHex(c.r,c.g,c.b);return{original:hex,current:hex}})
 }
 
 async function buildModifiedImages(replacements) {
-  const result = []
-  const THRESHOLD = 35
-  for (const { hash, bytes } of loadedImages) {
-    const blob = new Blob([new Uint8Array(bytes)], { type: 'image/png' })
-    let bitmap
-    try { bitmap = await createImageBitmap(blob) } catch(e) { continue }
-    const canvas = new OffscreenCanvas(bitmap.width, bitmap.height)
-    const ctx = canvas.getContext('2d')
-    ctx.drawImage(bitmap, 0, 0)
-    const imgData = ctx.getImageData(0, 0, bitmap.width, bitmap.height)
-    const d = imgData.data
-    let modified = false
-    for (let i = 0; i < d.length; i += 4) {
-      if (d[i+3] < 10) continue
-      const pr = d[i], pg = d[i+1], pb = d[i+2]
-      for (const rep of replacements) {
-        const dist = colorDist(pr, pg, pb, rep.from.r, rep.from.g, rep.from.b)
-        if (dist < THRESHOLD) {
-          const t = Math.max(0, 1 - dist / THRESHOLD)
-          d[i]   = Math.round(pr*(1-t) + rep.to.r*t)
-          d[i+1] = Math.round(pg*(1-t) + rep.to.g*t)
-          d[i+2] = Math.round(pb*(1-t) + rep.to.b*t)
-          modified = true; break
-        }
-      }
-    }
-    if (modified) {
-      ctx.putImageData(imgData, 0, 0)
-      const resultBlob = await canvas.convertToBlob({ type: 'image/png' })
-      result.push({ oldHash: hash, bytes: Array.from(new Uint8Array(await resultBlob.arrayBuffer())) })
-    }
-  }
+  const result=[]; const TH=35
+  for (const {hash,bytes} of loadedImages) { const blob=new Blob([new Uint8Array(bytes)],{type:'image/png'}); let bmp; try{bmp=await createImageBitmap(blob)}catch{continue}; const c=new OffscreenCanvas(bmp.width,bmp.height),ctx=c.getContext('2d'); ctx.drawImage(bmp,0,0); const img=ctx.getImageData(0,0,bmp.width,bmp.height),d=img.data; let mod=false; for(let i=0;i<d.length;i+=4){if(d[i+3]<10)continue;const pr=d[i],pg=d[i+1],pb=d[i+2];for(const rep of replacements){const dist=colorDist(pr,pg,pb,rep.from.r,rep.from.g,rep.from.b);if(dist<TH){const t=Math.max(0,1-dist/TH);d[i]=Math.round(pr*(1-t)+rep.to.r*t);d[i+1]=Math.round(pg*(1-t)+rep.to.g*t);d[i+2]=Math.round(pb*(1-t)+rep.to.b*t);mod=true;break}}}; if(mod){ctx.putImageData(img,0,0);const rb=await c.convertToBlob({type:'image/png'});result.push({oldHash:hash,bytes:Array.from(new Uint8Array(await rb.arrayBuffer()))})} }
   return result
 }
 
 document.getElementById('apply-btn').addEventListener('click', async function() {
-  this.setAttribute('disabled', '')
-  this.textContent = 'Working…'
-  const solidReplacements = solidEntries
-    .filter(e => e.original.toLowerCase() !== e.current.toLowerCase())
-    .map(e => ({ from: e.original, to: e.current }))
-  const imageReplacements = imageEntries
-    .filter(e => e.original.toLowerCase() !== e.current.toLowerCase())
-    .map(e => ({ from: hexToRgb(e.original), to: hexToRgb(e.current) }))
-  let modifiedImages = []
-  if (imageReplacements.length > 0 && loadedImages.length > 0) {
-    modifiedImages = await buildModifiedImages(imageReplacements)
-  }
-  parent.postMessage({ pluginMessage: { type: 'apply', solidReplacements, modifiedImages } }, '*')
-  this.textContent = 'Apply colors'
+  this.setAttribute('disabled',''); this.textContent='Working…'
+  const sr = solidEntries.filter(e=>e.original.toLowerCase()!==e.current.toLowerCase()).map(e=>({from:e.original,to:e.current}))
+  const ir = imageEntries.filter(e=>e.original.toLowerCase()!==e.current.toLowerCase()).map(e=>({from:hexToRgb(e.original),to:hexToRgb(e.current)}))
+  let mi=[]; if(ir.length>0&&loadedImages.length>0) mi=await buildModifiedImages(ir)
+  parent.postMessage({pluginMessage:{type:'apply',solidReplacements:sr,modifiedImages:mi}},'*')
+  this.textContent='Apply colors'
 })
 
 // ---- palette tab ----
 function renderPaletteList() {
-  const list = document.getElementById('palette-list')
-  list.innerHTML = ''
-  if (savedPalettes.length === 0) {
-    list.innerHTML = '<div class="palette-empty">No palettes saved yet.<br>Set your target colors in the Colors tab, then save them here.</div>'
-    return
-  }
-  for (const palette of savedPalettes) {
-    const item = document.createElement('div')
-    item.className = 'palette-item'
-    const dots = document.createElement('div')
-    dots.className = 'palette-dots'
-    for (const hex of palette.colors.slice(0, 7)) {
-      const dot = document.createElement('div')
-      dot.className = 'palette-dot'
-      dot.style.background = hex
-      dot.title = hex
-      dots.appendChild(dot)
-    }
-    const name = document.createElement('span')
-    name.className = 'palette-name'
-    name.textContent = palette.name
-    const actions = document.createElement('div')
-    actions.className = 'palette-actions'
-    const loadBtn = document.createElement('button')
-    loadBtn.className = 'btn-load'
-    loadBtn.textContent = 'Load'
-    loadBtn.addEventListener('click', () => {
-      const allEntries = [...solidEntries, ...imageEntries]
-      for (let i = 0; i < Math.min(palette.colors.length, allEntries.length); i++) {
-        allEntries[i].current = palette.colors[i].toUpperCase()
-      }
-      tabColors.click()
-      renderAll()
-    })
-    const delBtn = document.createElement('button')
-    delBtn.className = 'btn-del'
-    delBtn.textContent = '×'
-    delBtn.title = 'Delete'
-    delBtn.addEventListener('click', () => parent.postMessage({ pluginMessage: { type: 'delete-palette', id: palette.id } }, '*'))
-    actions.appendChild(loadBtn); actions.appendChild(delBtn)
-    item.appendChild(dots); item.appendChild(name); item.appendChild(actions)
+  const list=document.getElementById('palette-list'); list.innerHTML=''
+  if(!savedPalettes.length){list.innerHTML='<div class="palette-empty">No palettes saved yet.</div>';return}
+  for(const pal of savedPalettes) {
+    const item=document.createElement('div');item.className='palette-item'
+    const dots=document.createElement('div');dots.className='palette-dots'
+    for(const hex of pal.colors.slice(0,7)){const d=document.createElement('div');d.className='palette-dot';d.style.background=hex;dots.appendChild(d)}
+    const name=document.createElement('span');name.className='palette-name';name.textContent=pal.name
+    const actions=document.createElement('div');actions.className='palette-actions'
+    const loadBtn=document.createElement('button');loadBtn.className='btn-load';loadBtn.textContent='Load'
+    loadBtn.addEventListener('click',()=>{const all=[...solidEntries,...imageEntries];for(let i=0;i<Math.min(pal.colors.length,all.length);i++)all[i].current=pal.colors[i].toUpperCase();document.getElementById('tab-colors').click();renderAll()})
+    const delBtn=document.createElement('button');delBtn.className='btn-del';delBtn.textContent='×'
+    delBtn.addEventListener('click',()=>parent.postMessage({pluginMessage:{type:'delete-palette',id:pal.id}},'*'))
+    actions.appendChild(loadBtn);actions.appendChild(delBtn)
+    item.appendChild(dots);item.appendChild(name);item.appendChild(actions)
     list.appendChild(item)
   }
 }
+document.getElementById('save-palette-btn').addEventListener('click',()=>{const n=document.getElementById('palette-name'),name=n.value.trim();if(!name){n.focus();return};const all=[...solidEntries,...imageEntries];if(!all.length)return;parent.postMessage({pluginMessage:{type:'save-palette',palette:{id:'pal-'+Date.now(),name,colors:all.map(e=>e.current)}}},'*');n.value=''})
+document.getElementById('export-btn').addEventListener('click',()=>{if(!savedPalettes.length)return;const b=new Blob([JSON.stringify(savedPalettes,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='swatchswap-palettes.json';a.click()})
+document.getElementById('import-btn').addEventListener('click',()=>document.getElementById('import-file').click())
+document.getElementById('import-file').addEventListener('change',async function(e){const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());if(Array.isArray(d))for(const p of d)if(p.id&&p.name&&Array.isArray(p.colors))parent.postMessage({pluginMessage:{type:'save-palette',palette:p}},'*')}catch{};this.value=''})
 
-document.getElementById('save-palette-btn').addEventListener('click', () => {
-  const nameEl = document.getElementById('palette-name')
-  const name = nameEl.value.trim()
-  if (!name) { nameEl.focus(); return }
-  const allEntries = [...solidEntries, ...imageEntries]
-  if (allEntries.length === 0) { tabColors.click(); return }
-  const palette = { id: 'pal-' + Date.now(), name, colors: allEntries.map(e => e.current) }
-  parent.postMessage({ pluginMessage: { type: 'save-palette', palette } }, '*')
-  nameEl.value = ''
+// ---- pairings tab ----
+function renderPairColorPicks() {
+  const c=document.getElementById('pair-color-picks');c.innerHTML='';selectedPairColors=[]
+  for(const e of [...solidEntries,...imageEntries]) {
+    const d=document.createElement('div');d.className='pair-color-pick';d.style.background=e.original;d.title=e.original
+    d.addEventListener('click',()=>{const i=selectedPairColors.indexOf(e.original);if(i>=0){selectedPairColors.splice(i,1);d.classList.remove('selected')}else{selectedPairColors.push(e.original);d.classList.add('selected')};document.getElementById('btn-add-pair').disabled=selectedPairColors.length<2})
+    c.appendChild(d)
+  }
+}
+function renderPairList() {
+  const list=document.getElementById('pair-list');list.innerHTML=''
+  if(!savedPairings.length){list.innerHTML='<div class="pair-list-empty">No pairings yet.</div>';return}
+  for(const p of savedPairings) {
+    const item=document.createElement('div');item.className='pair-item'
+    const dots=document.createElement('div');dots.className='pair-dots'
+    for(const c of p.colors){const d=document.createElement('div');d.className='pair-dot';d.style.background=c.hex;dots.appendChild(d)}
+    const name=document.createElement('span');name.className='pair-name';name.textContent=p.label
+    const tp=document.createElement('span');tp.className='pair-type-label';tp.textContent=p.type+(p.targetContrastRatio?' ('+p.targetContrastRatio+':1)':'')
+    const actions=document.createElement('div');actions.className='pair-actions'
+    const delBtn=document.createElement('button');delBtn.className='btn-del';delBtn.textContent='×'
+    delBtn.addEventListener('click',()=>parent.postMessage({pluginMessage:{type:'delete-pairing',id:p.id}},'*'))
+    actions.appendChild(delBtn)
+    item.appendChild(dots);item.appendChild(name);item.appendChild(tp);item.appendChild(actions)
+    list.appendChild(item)
+  }
+}
+document.getElementById('btn-add-pair').addEventListener('click',()=>{
+  if(selectedPairColors.length<2)return
+  const label=document.getElementById('pair-label').value.trim()||'untitled pair'
+  const type=document.getElementById('pair-type').value
+  const ratio=parseFloat(document.getElementById('pair-ratio').value)
+  const pairing={id:'pair-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),label,type,targetContrastRatio:type==='contrast'?ratio:undefined,colors:selectedPairColors.map((hex,i)=>({role:'color-'+(i+1),hex:hex.toUpperCase()})),originalColors:selectedPairColors.map((hex,i)=>({role:'color-'+(i+1),hex:hex.toUpperCase()}))}
+  parent.postMessage({pluginMessage:{type:'save-pairing',pairing}},'*')
+  document.getElementById('pair-label').value='';selectedPairColors=[];document.querySelectorAll('.pair-color-pick').forEach(d=>d.classList.remove('selected'));document.getElementById('btn-add-pair').disabled=true
 })
-
-document.getElementById('export-btn').addEventListener('click', () => {
-  if (!savedPalettes.length) return
-  const blob = new Blob([JSON.stringify(savedPalettes, null, 2)], { type: 'application/json' })
-  const a = document.createElement('a')
-  a.href = URL.createObjectURL(blob)
-  a.download = 'swatchswap-palettes.json'
-  a.click()
+document.getElementById('export-pairs-btn').addEventListener('click',()=>{
+  if(!savedPairings.length)return
+  const out={version:1,pairings:savedPairings.map(p=>({id:p.id,label:p.label,type:p.type,targetContrastRatio:p.targetContrastRatio,colors:p.colors}))}
+  const b=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='swatchswap-pairings.json';a.click()
 })
-document.getElementById('import-btn').addEventListener('click', () => document.getElementById('import-file').click())
-document.getElementById('import-file').addEventListener('change', async function(e) {
-  const file = e.target.files[0]
-  if (!file) return
-  try {
-    const imported = JSON.parse(await file.text())
-    if (!Array.isArray(imported)) return
-    for (const p of imported) {
-      if (p.id && p.name && Array.isArray(p.colors))
-        parent.postMessage({ pluginMessage: { type: 'save-palette', palette: p } }, '*')
-    }
-  } catch(_) {}
-  this.value = ''
+document.getElementById('import-pairs-btn').addEventListener('click',()=>document.getElementById('import-pairs-file').click())
+document.getElementById('import-pairs-file').addEventListener('change',async function(e){
+  const f=e.target.files[0];if(!f)return
+  try{const d=JSON.parse(await f.text());if(d&&Array.isArray(d.pairings)){const imported=d.pairings.map(p=>({...p,originalColors:p.colors.map(c=>({...c}))}));parent.postMessage({pluginMessage:{type:'import-pairings',pairings:imported}},'*')}}catch{}
+  this.value=''
 })
 
 onmessage = async function(event) {
-  const msg = event.data.pluginMessage
-  if (!msg) return
-  if (msg.type === 'palettes-updated') {
-    savedPalettes = msg.palettes || []
-    renderPaletteList()
-    return
-  }
-  if (msg.type === 'no-selection') { showMessage('Select a layer to scan its colors.'); return }
-  if (msg.type === 'error') { showMessage(msg.message); return }
-  if (msg.type === 'scan-result') {
-    if (msg.palettes) savedPalettes = msg.palettes
-    solidEntries = (msg.solidColors || []).map(hex => ({ original: hex, current: hex }))
-    loadedImages = (msg.images || []).map(img => ({ hash: img.hash, bytes: img.bytes }))
-    const badge = document.getElementById('node-badge')
-    const badgeText = document.getElementById('badge-text')
-    if (msg.nodeCount > 1) {
-      badgeText.textContent = msg.nodeCount + ' nodes selected — changes apply to all'
-      badge.style.display = 'flex'
-    } else {
-      badge.style.display = 'none'
-    }
-    if (msg.images && msg.images.length > 0) {
-      showLoading('Reading image colors…')
-      await processImageColors(msg.images)
-    } else {
-      imageEntries = []
-    }
+  const msg = event.data.pluginMessage; if(!msg) return
+  if (msg.type==='palettes-updated') { savedPalettes=msg.palettes||[]; renderPaletteList(); return }
+  if (msg.type==='pairings-updated') { savedPairings=msg.pairings||[]; renderPairList(); renderAll(); return }
+  if (msg.type==='no-selection') { showMessage('Select a layer to scan its colors.'); return }
+  if (msg.type==='error') { showMessage(msg.message); return }
+  if (msg.type==='scan-result') {
+    if(msg.palettes) savedPalettes=msg.palettes
+    if(msg.pairings) savedPairings=msg.pairings
+    solidEntries=(msg.solidColors||[]).map(hex=>({original:hex,current:hex}))
+    loadedImages=(msg.images||[]).map(img=>({hash:img.hash,bytes:img.bytes}))
+    const badge=document.getElementById('node-badge'),badgeText=document.getElementById('badge-text')
+    if(msg.nodeCount>1){badgeText.textContent=msg.nodeCount+' nodes selected — changes apply to all';badge.style.display='flex'}else badge.style.display='none'
+    if(msg.images&&msg.images.length>0){showLoading('Reading image colors…');await processImageColors(msg.images)}else imageEntries=[]
     renderAll()
   }
 }
