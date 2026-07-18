@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>swatchswap — shade-preserving color swap</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d0d0d; color: #e0e0e0; min-height: 100vh; }
+  .header { padding: 24px 32px; border-bottom: 1px solid #222; display: flex; align-items: center; gap: 16px; }
+  .header h1 { font-size: 20px; font-weight: 600; color: #fff; }
+  .header h1 span { color: #888; font-weight: 400; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 32px; }
+  .drop-zone { border: 2px dashed #333; border-radius: 16px; padding: 64px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 32px; }
+  .drop-zone:hover, .drop-zone.dragover { border-color: #666; background: #1a1a1a; }
+  .drop-zone p { color: #888; font-size: 16px; }
+  .drop-zone .hint { font-size: 13px; color: #555; margin-top: 8px; }
+  .workspace { display: grid; grid-template-columns: 1fr 320px; gap: 32px; }
+  .preview-area { background: #141414; border-radius: 12px; padding: 16px; min-height: 400px; display: flex; align-items: center; justify-content: center; position: relative; }
+  .preview-area canvas { max-width: 100%; max-height: 500px; border-radius: 8px; }
+  .preview-area .label { position: absolute; top: 12px; left: 16px; font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+  .controls { display: flex; flex-direction: column; gap: 20px; }
+  .panel { background: #141414; border-radius: 12px; padding: 20px; }
+  .panel h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 12px; }
+  .color-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  .color-swatch { width: 36px; height: 36px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.15s; position: relative; }
+  .color-swatch:hover { transform: scale(1.15); }
+  .color-swatch.selected { border-color: #fff; }
+  .color-swatch .pct { position: absolute; bottom: -14px; left: 50%; transform: translateX(-50%); font-size: 9px; color: #555; white-space: nowrap; }
+  .mode-tabs { display: flex; gap: 4px; margin-bottom: 16px; }
+  .mode-tab { flex: 1; padding: 8px; text-align: center; font-size: 12px; border-radius: 8px; cursor: pointer; background: #1a1a1a; color: #888; border: none; transition: all 0.15s; }
+  .mode-tab.active { background: #2a2a2a; color: #fff; }
+  .hue-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .hue-row label { font-size: 12px; color: #888; min-width: 50px; }
+  .hue-row input[type=range] { flex: 1; accent-color: #888; }
+  .hue-preview { width: 28px; height: 28px; border-radius: 6px; border: 1px solid #333; flex-shrink: 0; }
+  .hue-name { font-size: 11px; color: #555; min-width: 55px; text-align: right; }
+  .swap-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .swap-row input[type=color] { width: 36px; height: 36px; border: none; border-radius: 8px; cursor: pointer; background: none; }
+  .swap-row .arrow { color: #555; font-size: 18px; }
+  .swap-row button { background: none; border: 1px solid #333; color: #888; border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: 11px; }
+  .btn { padding: 12px 20px; border-radius: 10px; border: none; cursor: pointer; font-size: 14px; font-weight: 500; width: 100%; transition: all 0.15s; }
+  .btn-primary { background: #fff; color: #000; }
+  .btn-primary:hover { background: #e0e0e0; }
+  .btn-secondary { background: #1a1a1a; color: #ccc; border: 1px solid #333; }
+  .btn-secondary:hover { background: #222; }
+  .stats { font-size: 12px; color: #555; text-align: center; margin-top: 8px; }
+  .hidden { display: none; }
+  .previews { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .previews .preview-area { min-height: 300px; }
+  @media (max-width: 768px) { .workspace { grid-template-columns: 1fr; } .previews { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>swatchswap <span>pro</span></h1>
+</div>
+
+<div class="container">
+  <div id="dropZone" class="drop-zone">
+    <p>drop an image here or click to upload</p>
+    <p class="hint">supports png, jpg, svg, webp</p>
+    <input type="file" id="fileInput" accept="image/*" style="display:none">
+  </div>
+
+  <div id="workspace" class="hidden">
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="hue">hue rotation</button>
+      <button class="mode-tab" data-mode="swap">color swap</button>
+    </div>
+
+    <div class="previews">
+      <div class="preview-area">
+        <span class="label">original</span>
+        <canvas id="originalCanvas"></canvas>
+      </div>
+      <div class="preview-area">
+        <span class="label">result</span>
+        <canvas id="resultCanvas"></canvas>
+      </div>
+    </div>
+
+    <div class="workspace" style="margin-top: 24px;">
+      <div>
+        <div class="panel">
+          <h3>detected colors</h3>
+          <div id="colorGrid" class="color-grid"></div>
+        </div>
+        <div class="panel" style="margin-top: 16px;">
+          <h3>shade groups</h3>
+          <div id="shadeGroups"></div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div id="hueMode" class="panel">
+          <h3>oklch hue rotation</h3>
+          <div class="hue-row">
+            <label>source</label>
+            <div class="hue-preview" id="srcHuePreview"></div>
+            <input type="range" id="srcHue" min="0" max="360" value="25">
+            <span class="hue-name" id="srcHueName">red</span>
+          </div>
+          <div class="hue-row">
+            <label>target</label>
+            <div class="hue-preview" id="tgtHuePreview"></div>
+            <input type="range" id="tgtHue" min="0" max="360" value="264">
+            <span class="hue-name" id="tgtHueName">blue</span>
+          </div>
+          <button class="btn btn-primary" id="applyHue">apply hue rotation</button>
+          <div class="stats" id="hueStats"></div>
+        </div>
+
+        <div id="swapMode" class="panel hidden">
+          <h3>direct color swap</h3>
+          <div id="swapList"></div>
+          <button class="btn btn-secondary" id="addSwap" style="margin-bottom: 12px;">+ add swap pair</button>
+          <button class="btn btn-primary" id="applySwap">apply color swap</button>
+          <div class="stats" id="swapStats"></div>
+        </div>
+
+        <button class="btn btn-secondary" id="downloadBtn">download result</button>
+        <button class="btn btn-secondary" id="resetBtn">reset to original</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { detectColors, detectShades, recolorImage, recolorByHueRotation, getDominantHue, rgbToOklch, oklchToRgb, rgbToHex, HUE_NAMES } from './engine.js';
+
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const workspace = document.getElementById('workspace');
+const originalCanvas = document.getElementById('originalCanvas');
+const resultCanvas = document.getElementById('resultCanvas');
+
+let originalImageData = null;
+let detectedColors = [];
+
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); handleFile(e.dataTransfer.files[0]); });
+fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+
+function handleFile(file) {
+  if (!file) return;
+  const img = new Image();
+  img.onload = () => {
+    originalCanvas.width = resultCanvas.width = img.width;
+    originalCanvas.height = resultCanvas.height = img.height;
+    const octx = originalCanvas.getContext('2d');
+    octx.drawImage(img, 0, 0);
+    originalImageData = octx.getImageData(0, 0, img.width, img.height);
+    resultCanvas.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(originalImageData.data), img.width, img.height), 0, 0);
+    workspace.classList.remove('hidden');
+    dropZone.classList.add('hidden');
+    analyzeImage();
+  };
+  img.src = URL.createObjectURL(file);
+}
+
+function analyzeImage() {
+  detectedColors = detectColors(originalImageData);
+  renderColorGrid();
+  renderShadeGroups();
+  const dominant = getDominantHue(detectedColors);
+  if (dominant != null) {
+    document.getElementById('srcHue').value = Math.round(dominant);
+    updateHuePreviews();
+  }
+}
+
+function renderColorGrid() {
+  const grid = document.getElementById('colorGrid');
+  grid.innerHTML = detectedColors.slice(0, 24).map(c =>
+    `<div class="color-swatch" style="background:${c.hex}" title="${c.hex} (${c.percentage.toFixed(1)}%)"><span class="pct">${c.percentage.toFixed(0)}%</span></div>`
+  ).join('');
+}
+
+function renderShadeGroups() {
+  const groups = detectShades(detectedColors);
+  const container = document.getElementById('shadeGroups');
+  container.innerHTML = groups.slice(0, 6).map(g =>
+    `<div style="display:flex;gap:4px;margin-bottom:8px;align-items:center;">` +
+    g.shades.map(s => `<div style="width:24px;height:24px;border-radius:4px;background:${s.hex}" title="${s.hex} L=${s.oklch.L.toFixed(2)}"></div>`).join('') +
+    `<span style="font-size:10px;color:#555;margin-left:4px;">h=${Math.round(g.anchor.oklch.H)}°</span></div>`
+  ).join('');
+}
+
+function hueToColor(h) {
+  const rgb = oklchToRgb(0.7, 0.15, h);
+  return rgbToHex(rgb.r, rgb.g, rgb.b);
+}
+
+function hueToName(h) {
+  let best = '', bestDist = 999;
+  for (const [name, hue] of Object.entries(HUE_NAMES)) {
+    const d = Math.min(Math.abs(h - hue), 360 - Math.abs(h - hue));
+    if (d < bestDist) { bestDist = d; best = name; }
+  }
+  return best;
+}
+
+function updateHuePreviews() {
+  const sh = parseInt(document.getElementById('srcHue').value);
+  const th = parseInt(document.getElementById('tgtHue').value);
+  document.getElementById('srcHuePreview').style.background = hueToColor(sh);
+  document.getElementById('tgtHuePreview').style.background = hueToColor(th);
+  document.getElementById('srcHueName').textContent = hueToName(sh);
+  document.getElementById('tgtHueName').textContent = hueToName(th);
+}
+
+document.getElementById('srcHue').addEventListener('input', updateHuePreviews);
+document.getElementById('tgtHue').addEventListener('input', updateHuePreviews);
+updateHuePreviews();
+
+document.getElementById('applyHue').addEventListener('click', () => {
+  const src = parseInt(document.getElementById('srcHue').value);
+  const tgt = parseInt(document.getElementById('tgtHue').value);
+  const { imageData, changed } = recolorByHueRotation(originalImageData, src, tgt);
+  resultCanvas.getContext('2d').putImageData(imageData, 0, 0);
+  document.getElementById('hueStats').textContent = `${changed.toLocaleString()} pixels recolored`;
+});
+
+document.querySelectorAll('.mode-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('hueMode').classList.toggle('hidden', tab.dataset.mode !== 'hue');
+    document.getElementById('swapMode').classList.toggle('hidden', tab.dataset.mode !== 'swap');
+  });
+});
+
+document.getElementById('addSwap').addEventListener('click', () => {
+  const list = document.getElementById('swapList');
+  const row = document.createElement('div');
+  row.className = 'swap-row';
+  row.innerHTML = `<input type="color" class="swap-from" value="#ff0000"><span class="arrow">→</span><input type="color" class="swap-to" value="#0000ff"><button onclick="this.parentElement.remove()">✕</button>`;
+  list.appendChild(row);
+});
+
+document.getElementById('applySwap').addEventListener('click', () => {
+  const rows = document.querySelectorAll('.swap-row');
+  const replacements = [...rows].map(r => ({
+    from: r.querySelector('.swap-from').value,
+    to: r.querySelector('.swap-to').value
+  }));
+  if (replacements.length === 0) return;
+  const { imageData, changed } = recolorImage(originalImageData, replacements);
+  resultCanvas.getContext('2d').putImageData(imageData, 0, 0);
+  document.getElementById('swapStats').textContent = `${changed.toLocaleString()} pixels recolored`;
+});
+
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  resultCanvas.toBlob(blob => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'swatchswap-result.png';
+    a.click();
+  });
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  resultCanvas.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(originalImageData.data), originalImageData.width, originalImageData.height), 0, 0);
+  document.getElementById('hueStats').textContent = '';
+  document.getElementById('swapStats').textContent = '';
+});
+</script>
+</body>
+</html>
